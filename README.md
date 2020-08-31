@@ -1,5 +1,25 @@
 
+Training Colab environment:
 
+Weed control:
+
+1st https://colab.research.google.com/drive/1C2l7ES8eBoZS528FMd5p7VtXlFp8wDnx
+
+2nd https://colab.research.google.com/drive/11-yJFeY5E7Jk4FwUYiKpW240HL_tSSMw
+
+3rd https://colab.research.google.com/drive/1Rp24K6eAd81P5tfLwhll2cPD48FM9FBL
+              
+Garbage classification: 
+
+1st https://colab.research.google.com/drive/1VpDFN7sWEspXoQxueSGzeS_zFS5_0JSX
+
+2nd https://colab.research.google.com/drive/1Ud-oNaV0bFWIBt--mZ9BM1LUVo3R8B0y
+
+3rd https://colab.research.google.com/drive/1HdYO_3sA31yc7tlpuesRL2deHibeO-q9
+                       
+Detect in Colab environment:
+
+https://colab.research.google.com/drive/1J0YyUCiRWHbdBEtyGSd16Eoo8ABv95rK
 
 ----The information below is copied from the publisher source of yolo v5----
 -----------------------------------------------------------------------
