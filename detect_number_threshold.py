@@ -152,9 +152,19 @@ def detect(save_img=False):
                                                    (weed_location[1, weed] + weed_location[3, weed]) / 2)
                                     weed_centres = numpy.c_[weed_centres, weed_centre]
 
+                                weed_centres_float = weed_centres
                                 weed_centres = weed_centres.astype(int)
                                 crop_location = crop_location.astype(int)
-                                print(weed_centres)
+                                weed_offsets = weed_centres - weed_centres_float
+                                weed_offset = 0
+                                for offset in range(weed_offsets.shape[1]):
+                                    weed_offset += numpy.sqrt(weed_offsets[0, offset] ** 2 * merge_number
+                                                           + weed_offsets[1, offset] ** 2 * merge_number)
+
+                                # print(weed_centres)
+                                distance_all = 0
+                                closed_length_all = 0
+                                direction_length_all = 0
                                 for move in range(weed_location.shape[1]):
                                     if weed_location.shape[1] < 2:
                                         break
@@ -170,8 +180,9 @@ def detect(save_img=False):
                                             way = a_star.path_backtrace()
                                             print('way:', way)
                                             m1 = MAP()
-                                            m1.draw_three_axes(a_star)
-
+                                            closed_length, direction_length = m1.draw_three_axes(a_star)
+                                            closed_length_all += closed_length
+                                            direction_length_all += direction_length
                                             way_on_img = (way * merge_number).astype(int)
                                             print(way_on_img)
 
@@ -182,6 +193,9 @@ def detect(save_img=False):
                                                     if ways + 1 < way_on_img.shape[1]:
                                                         way_now = (way_on_img[1, ways], way_on_img[0, ways])
                                                         way_next = (way_on_img[1, ways + 1], way_on_img[0, ways + 1])
+                                                        distance = numpy.sqrt((way_next[0] - way_now[0]) ** 2 +
+                                                                              (way_next[1] - way_now[1]) ** 2)
+                                                        distance_all += distance
                                                         red = (0, 0, 255)
                                                         cv2.line(im0, way_now, way_next, red, thickness=3)
                                         else:
@@ -216,18 +230,19 @@ def detect(save_img=False):
 
     if save_txt or save_img:
         print('Results saved to %s' % Path(out))
-        if platform.system() == 'Darwin' and not opt.update:  # MacOS
-            os.system('open ' + save_path)
+        # if platform.system() == 'Darwin' and not opt.update:  # MacOS
+             # os.system('open ' + save_path)
 
     print('Done. (%.3fs)' % (time.time() - t0))
 
+    return opt.number, closed_length_all, direction_length_all, distance_all, weed_offset
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default='yolov5s.pt', help='model.pt path(s)')
+    parser.add_argument('--weights', type=str, default='yolov5s.pt', help='model.pt path(s)')
     parser.add_argument('--source', type=str, default='inference/images', help='source')  # file/folder, 0 for webcam
     parser.add_argument('--output', type=str, default='inference/output', help='output folder')  # output folder
-    parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
+    parser.add_argument('--img-size', type=int, default=512, help='inference size (pixels)')
     parser.add_argument('--conf-thres', type=float, default=0.4, help='object confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
